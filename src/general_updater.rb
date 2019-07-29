@@ -2,7 +2,7 @@ class GeneralUpdater
 
   def initialize(options)
     Gitlab.configure do |config|
-      config.endpoint = options[:url] + '/api/v4'
+      config.endpoint = options[:url]
       config.private_token = options[:token]
       config.user_agent = 'Gitlab Package Updater'
     end
