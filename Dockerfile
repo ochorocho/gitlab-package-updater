@@ -32,10 +32,19 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
     echo $'memory_limit = 1024M' >> /etc/php/php.ini && \
     echo "{}" > ~/.composer/composer.json
 
-RUN apt-add-repository -y ppa:rael-gc/rvm
-RUN apt update
-RUN apt -y install rvm
-#
+#RUN apt-add-repository -y ppa:rael-gc/rvm
+#RUN apt update
+#RUN apt -y install rvm
+
+RUN curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
+RUN curl -sSL https://get.rvm.io | bash -s stable
+ENV PATH=$PATH:/opt/rvm/bin:/opt/rvm/sbin
+RUN rvm list remote
+
+#RUN rvm install ruby-2.6.3 --binary
+
+#RUN gem install bundler:2.0.1
+
 #RUN /bin/bash -l -c "which npm"
 #RUN /bin/bash -l -c "rvm list remote"
 #RUN /bin/bash -l -c "rvm install ruby-2.6.3 --binary"
