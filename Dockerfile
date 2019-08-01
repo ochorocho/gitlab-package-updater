@@ -1,6 +1,7 @@
 FROM ubuntu:18.04
 
 SHELL [ "/bin/bash", "-l", "-c" ]
+ENTRYPOINT ["/bin/bash", "-l", "-c"]
 
 ENV NVM_VERSION=v0.33.6 ENV=/root/.bashrc
 ENV TZ=Europe/Berlin
@@ -17,8 +18,8 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | b
     echo 'export NVM_DIR="$HOME/.nvm"' >> $ENV && \
     echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm' >> $ENV && \
     . $HOME/.nvm/nvm.sh
-RUN . ~/.nvm/nvm.sh; nvm install stable
-RUN . ~/.nvm/nvm.sh; nvm use stable
+#RUN . ~/.nvm/nvm.sh; nvm install stable
+#RUN . ~/.nvm/nvm.sh; nvm use stable
 RUN npm install --global @oclif/config @oclif/plugin-help @oclif/command bundle-outdated-formatter
 
 # Setup Yarn
@@ -39,7 +40,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 RUN curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
 RUN curl -sSL https://get.rvm.io | bash -s stable
 ENV PATH=$PATH:/opt/rvm/bin:/opt/rvm/sbin
-RUN rvm list remote
+RUN rvm install ruby-2.6.3 --binary
+RUN gem install bundler
 
 #RUN rvm install ruby-2.6.3 --binary
 
