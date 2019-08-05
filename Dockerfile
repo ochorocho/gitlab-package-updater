@@ -18,8 +18,8 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | b
     echo 'export NVM_DIR="$HOME/.nvm"' >> $ENV && \
     echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm' >> $ENV && \
     . $HOME/.nvm/nvm.sh
-#RUN . ~/.nvm/nvm.sh; nvm install stable
-#RUN . ~/.nvm/nvm.sh; nvm use stable
+RUN . ~/.nvm/nvm.sh; nvm install stable
+RUN . ~/.nvm/nvm.sh; nvm use stable
 RUN npm install --global @oclif/config @oclif/plugin-help @oclif/command bundle-outdated-formatter
 
 # Setup Yarn
