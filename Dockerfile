@@ -7,7 +7,6 @@ ENV NVM_VERSION=v0.33.6 ENV=/root/.bashrc
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-
 RUN apt update && apt install -y apt-utils curl ca-certificates openssl coreutils make gcc g++ grep util-linux binutils findutils \
     software-properties-common ruby rdoc git curl php php-json php-mbstring openssl php-phar make autoconf nodejs npm libreadline-dev zlib1g-dev && \
     gem update --system && gem install bundler
@@ -33,29 +32,15 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
     echo $'memory_limit = 1024M' >> /etc/php/php.ini && \
     echo "{}" > ~/.composer/composer.json
 
-#RUN apt-add-repository -y ppa:rael-gc/rvm
-#RUN apt update
-#RUN apt -y install rvm
-
+# Setup rvm
 RUN curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
 RUN curl -sSL https://get.rvm.io | bash -s stable
 ENV PATH=$PATH:/opt/rvm/bin:/opt/rvm/sbin
 RUN rvm install ruby-2.6.3 --binary
 RUN gem install bundler
 
-#RUN rvm install ruby-2.6.3 --binary
-
-#RUN gem install bundler:2.0.1
-
-#RUN /bin/bash -l -c "which npm"
-#RUN /bin/bash -l -c "rvm list remote"
-#RUN /bin/bash -l -c "rvm install ruby-2.6.3 --binary"
-
 # Clean image
-RUN apt remove -y --purge wget nano gcc g++ apache2
-
- #&& \
- #   apt autoclean && apt autoremove -y
+RUN apt remove -y --purge wget nano gcc g++ apache2 && apt autoclean && apt autoremove -y
 
 ENV PATH="/gitlab-package-updater/bin:${PATH}"
 
