@@ -7,7 +7,7 @@ ENV ENV=/root/.bashrc
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt update && apt install -y apt-utils curl ca-certificates openssl coreutils make gcc g++ grep util-linux binutils findutils \
+RUN apt update && apt install -y apt-utils curl ca-certificates openssl coreutils make gcc g++ grep util-linux \
     software-properties-common ruby rdoc git curl php php-json php-mbstring openssl php-phar make autoconf nodejs npm libreadline-dev zlib1g-dev && \
     gem update --system && gem install bundler &&\
     rm -rf /var/lib/apt/lists/*
@@ -30,17 +30,16 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | b
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
     echo $'memory_limit = 1024M' >> /etc/php/php.ini && \
     echo "{}" > ~/.composer/composer.json && \
-    rm -rf /var/lib/apt/lists/*
-
+    rm -rf /var/lib/apt/lists/* && \
 # Setup rvm
-RUN curl -sSL https://rvm.io/pkuczynski.asc | gpg --import - && \
+    curl -sSL https://rvm.io/pkuczynski.asc | gpg --import - && \
     curl -sSL https://get.rvm.io | bash -s stable
 ENV PATH=$PATH:/opt/rvm/bin:/opt/rvm/sbin
 RUN rvm install ruby-2.6.3 --binary && \
     gem install bundler
 
 # Clean image
-RUN apt remove -y --purge nano apt-utils wget nano gcc g++ apache2 && apt clean && apt autoclean && apt autoremove -y
+RUN apt remove -y --purge nano apt-utils python2.7 wget nano gnupg make linux-headers gcc g++ apache2 && apt clean && apt autoclean && apt autoremove -y
 
 ENV PATH="/gitlab-package-updater/bin:${PATH}"
 
