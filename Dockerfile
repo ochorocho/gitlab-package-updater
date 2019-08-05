@@ -3,7 +3,7 @@ FROM ubuntu:18.04
 SHELL [ "/bin/bash", "-l", "-c" ]
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
 
-ENV NVM_VERSION=v0.33.6 ENV=/root/.bashrc
+ENV ENV=/root/.bashrc
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -16,37 +16,32 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | b
 	echo "#NVM Setup" >> $ENV && \
     echo 'export NVM_DIR="$HOME/.nvm"' >> $ENV && \
     echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm' >> $ENV && \
-    . $HOME/.nvm/nvm.sh
-RUN . ~/.nvm/nvm.sh; nvm install stable
-RUN . ~/.nvm/nvm.sh; nvm use stable
-RUN npm install --global @oclif/config @oclif/plugin-help @oclif/command bundle-outdated-formatter
-
+    . $HOME/.nvm/nvm.sh && \
+    . ~/.nvm/nvm.sh; nvm install stable && \
+    . ~/.nvm/nvm.sh; nvm use stable && \
+    npm install --global @oclif/config @oclif/plugin-help @oclif/command bundle-outdated-formatter && \
 # Setup Yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt update && apt install -y yarn && \
-    yarn global add yarn-outdated-formatter
-
+    yarn global add yarn-outdated-formatter && \
 # Setup Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
     echo $'memory_limit = 1024M' >> /etc/php/php.ini && \
     echo "{}" > ~/.composer/composer.json
 
 # Setup rvm
-RUN curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
-RUN curl -sSL https://get.rvm.io | bash -s stable
+RUN curl -sSL https://rvm.io/pkuczynski.asc | gpg --import - && \
+    curl -sSL https://get.rvm.io | bash -s stable
 ENV PATH=$PATH:/opt/rvm/bin:/opt/rvm/sbin
-RUN rvm install ruby-2.6.3 --binary
-RUN gem install bundler
+RUN rvm install ruby-2.6.3 --binary && \
+    gem install bundler
 
 # Clean image
-RUN apt remove -y --purge wget nano gcc g++ apache2 && apt autoclean && apt autoremove -y
+RUN apt remove -y --purge nano apt-utils wget nano gcc g++ apache2 && apt clean && apt autoclean && apt autoremove -y
 
 ENV PATH="/gitlab-package-updater/bin:${PATH}"
 
 COPY . /gitlab-package-updater
-
-# Install packages
 RUN cd /gitlab-package-updater && bundle install
-
 WORKDIR /gitlab-package-updater/
