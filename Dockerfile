@@ -39,7 +39,7 @@ RUN rvm install ruby-2.6.3 --binary && \
     gem install bundler
 
 # Clean image
-RUN apt remove -y --purge nano apt-utils python2.7 wget nano gnupg make linux-headers gcc g++ apache2 && apt clean && apt autoclean && apt autoremove -y
+RUN apt remove -y --purge gcc-7 nano apt-utils python2.7 python3 wget nano gnupg make linux-headers gcc g++ apache2 && apt clean && apt autoclean && apt autoremove -y
 
 ENV PATH="/gitlab-package-updater/bin:${PATH}"
 
