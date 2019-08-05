@@ -9,7 +9,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt update && apt install -y apt-utils curl ca-certificates openssl coreutils make gcc g++ grep util-linux binutils findutils \
     software-properties-common ruby rdoc git curl php php-json php-mbstring openssl php-phar make autoconf nodejs npm libreadline-dev zlib1g-dev && \
-    gem update --system && gem install bundler
+    gem update --system && gem install bundler &&\
+    rm -rf /var/lib/apt/lists/*
 
 # Setup NVM
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash && \
@@ -28,7 +29,8 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | b
 # Setup Composer
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
     echo $'memory_limit = 1024M' >> /etc/php/php.ini && \
-    echo "{}" > ~/.composer/composer.json
+    echo "{}" > ~/.composer/composer.json && \
+    rm -rf /var/lib/apt/lists/*
 
 # Setup rvm
 RUN curl -sSL https://rvm.io/pkuczynski.asc | gpg --import - && \
