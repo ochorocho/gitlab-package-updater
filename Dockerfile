@@ -7,9 +7,14 @@ ENV ENV=/root/.bashrc
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+# sudo update-alternatives --set php /usr/bin/php7.0
+
 RUN apt update && apt install -y apt-utils curl ca-certificates openssl coreutils make gcc g++ grep util-linux \
     software-properties-common ruby rdoc git curl php php-json php-mbstring openssl php-phar make autoconf nodejs npm libreadline-dev zlib1g-dev && \
-    gem update --system && gem install bundler &&\
+    gem update --system && gem install bundler && \
+    add-apt-repository ppa:ondrej/php && \
+    apt update && \
+    apt install -y php7.1-cli php7.2-cli php7.3-cli && \
     rm -rf /var/lib/apt/lists/*
 
 # Setup NVM
@@ -28,7 +33,7 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | b
     yarn global add yarn-outdated-formatter && \
 # Setup Composer
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
-    echo $'memory_limit = 1024M' >> /etc/php/php.ini && \
+#    echo $'memory_limit = 1024M' >> /etc/php/php.ini && \
     echo "{}" > ~/.composer/composer.json && \
     rm -rf /var/lib/apt/lists/* && \
 # Setup rvm
