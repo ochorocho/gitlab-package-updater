@@ -1,4 +1,4 @@
-require './src/general_updater'
+require_relative 'general_updater'
 
 class ComposerUpdater < GeneralUpdater
   OUTPUT_FORMAT = "json".freeze
@@ -27,12 +27,13 @@ class ComposerUpdater < GeneralUpdater
     table += headline_seperator(keys)
     table += row(json.first[1], keys)
 
-    puts table
+    table
   end
 
   def row(json, keys)
     rows = ''
     json.each do |package|
+      next unless package['latest-status'] == 'semver-safe-update'
       rows += '| '
       keys.each do |field|
         rows += "#{package[field]} | "

@@ -1,4 +1,4 @@
-require './src/general_updater'
+require_relative 'general_updater'
 
 class YarnUpdater < GeneralUpdater
   OUTPUT_FORMAT = "--json".freeze
@@ -21,23 +21,29 @@ class YarnUpdater < GeneralUpdater
   def parse_to_markdown(json)
     json = json.split("\n")
     json_data = JSON.parse(json[1])
+    rows = row(json_data["data"]["body"])
 
-    table = "\n### Yarn\n\n"
-    table += headline(json_data["data"]["head"])
-    table += headline_seperator(json_data["data"]["head"])
-    table += row(json_data["data"]["body"])
+    if rows == ''
+      table = "\n### Yarn\n\n"
+      table += headline(json_data["data"]["head"])
+      table += headline_seperator(json_data["data"]["head"])
+      table += rows
 
-    puts table
+      table
+    end
   end
 
   def row(json)
     rows = ''
+
     json.each do |package|
-      rows += '| '
-      package.each do |field|
-        rows += "#{field} | "
+      unless package[1] == package[2]
+        rows += '| '
+        package.each do |field|
+          rows += "#{field} | "
+        end
+        rows += "\n"
       end
-      rows += "\n"
     end
 
     rows

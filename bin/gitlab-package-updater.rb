@@ -1,42 +1,52 @@
 #! /usr/bin/env ruby
 
-# Fix the PATH so that gitlab-shell can find git-upload-pack and friends.
-# ENV['PATH'] = '/opt/gitlab/bin:/opt/gitlab/embedded/bin:' + ENV['PATH']
-#
-# require 'net/http'
-# require 'json'
-# require 'cgi'
-
 require 'git'
 require 'gitlab'
 require 'optparse'
-require './src/cli_options'
-require './src/general_updater'
-require './src/composer_updater'
-require './src/yarn_updater'
-require './src/npm_updater'
+
+require './app/cli_options'
+require './app/updater/composer_updater'
+require './app/updater/yarn_updater'
+require './app/updater/npm_updater'
+require './app/api_request'
+require './app/git_action'
 
 options = CliOptions.get
+
+git = GitAction.new(options)
+git.create_branch
+git.checkout
+
+markdown = ''
 
 if (File.exist?("#{options[:repo]}/composer.lock"))
   composer = ComposerUpdater.new(options)
   composer.install
-  composer.outdated
+  outdated = composer.outdated.to_s
+  markdown << outdated unless outdated.nil?
   composer.update
 end
 
 if (File.exist?("#{options[:repo]}/yarn.lock"))
   yarn = YarnUpdater.new(options)
-  yarn.outdated
+  outdated = yarn.outdated
+  markdown << outdated unless outdated.nil?
   yarn.update
 end
 
 if (File.exist?("#{options[:repo]}/package-lock.json"))
   npm = NpmUpdater.new(options)
-  npm.outdated
+  outdated = npm.outdated
+  markdown << outdated unless outdated.nil?
   npm.update
 end
 
-# Gitlab.create_branch()
+puts git.files_changed.count
 
+if git.files_changed.count > 0
+  git.add
+  git.commit
+  git.push
 
+  ApiRequest.new(options, markdown).merge_request
+end

@@ -1,4 +1,4 @@
-require './src/general_updater'
+require_relative 'general_updater'
 
 class NpmUpdater < GeneralUpdater
   OUTPUT_FORMAT = "--json".freeze
