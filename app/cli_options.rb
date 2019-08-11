@@ -9,6 +9,7 @@ class CliOptions
     OptionParser.new do |parser|
       parser.on('-v', '--version', 'Current version.') do
         puts '1.0.0'
+        options[:version] = '1.0.0'
       end
 
       parser.on('-r', '--repo PATH', 'Path to git Repository') do |v|

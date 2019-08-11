@@ -13,6 +13,10 @@ require './app/git_action'
 
 options = CliOptions.get
 
+unless options[:version]
+  exit
+end
+
 git = GitAction.new(options)
 git.create_branch
 git.checkout
@@ -40,8 +44,6 @@ if (File.exist?("#{options[:repo]}/package-lock.json"))
   markdown << outdated unless outdated.nil?
   npm.update
 end
-
-puts git.files_changed.count
 
 if git.files_changed.count > 0
   git.add
