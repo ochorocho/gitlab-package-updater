@@ -30,6 +30,7 @@ unless options[:version]
 
   if (File.exist?("#{options[:repo]}/yarn.lock"))
     yarn = YarnUpdater.new(options)
+    yarn.node_version
     outdated = yarn.outdated
     markdown << outdated unless outdated.nil?
     yarn.update
@@ -37,6 +38,7 @@ unless options[:version]
 
   if (File.exist?("#{options[:repo]}/package-lock.json"))
     npm = NpmUpdater.new(options)
+    npm.node_version
     outdated = npm.outdated
     markdown << outdated unless outdated.nil?
     npm.update

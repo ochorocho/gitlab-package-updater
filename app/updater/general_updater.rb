@@ -20,4 +20,13 @@ class GeneralUpdater
     end
     headline += "\n"
   end
+
+  def node_version
+    node_version = File.read("#{@options[:repo]}/.nvmrc")
+
+    unless node_version.empty?
+      `. ~/.nvm/nvm.sh; nvm install #{node_version}`
+      `. ~/.nvm/nvm.sh; nvm use #{node_version}`
+    end
+  end
 end
